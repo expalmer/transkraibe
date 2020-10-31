@@ -1,111 +1,170 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
+import Waveform from 'waveform-react'
+import classnames from 'classnames'
 
 import video2 from './videos/video2.mp4'
+
+import { getContext, getAudioBuffer, getDragNextTime, getNextTime, getPosition } from './utils'
+
+import { useKeyBindings } from './hooks/use-key-bindings'
+
+import { Video } from './components/video'
 
 function App() {
 
   const video = useRef()
   const trackRef = useRef()
-
   const iniRef = useRef()
   const endRef = useRef()
 
-  const [restart, setRestart] = useState(false)
-
-  const [cursorPosition, setCursorPosition] = useState(0)
-
-  const [startPosition, setStartPosition] = useState(0)
-  const [endPosition, setEndPosition] = useState(640)
+  const [position, setPosition] = useState(0)
   
-  const videoChangeCurrentTime = time => video.current.currentTime = time
+  const [init, setInit] = useState({
+    width: 0,
+    nextTime: 0
+  })
 
+  const [ends, setEnds] = useState({
+    width: 0,
+    nextTime: 0
+  })
 
-  function getPosition(a, b) {
-    const left1 = a.current.getBoundingClientRect().left
-    const left2 = b.current.getBoundingClientRect().left
-    return left2 - left1
+  const [context] = useState(getContext())
+  const [videoBuffer, setVideoBuffer] = useState(null)
+
+  const setCurrentTime = (time) => video.current.currentTime = time
+
+  const handlePlayPause = () => {
+    if (video.current.paused) {
+      video.current.play()
+    } else {
+      video.current.pause()
+      return
+    }
   }
 
-  function getNextTime(position) {
-    return (video.current.duration / trackRef.current.clientWidth) * position
-  }
-
+  useKeyBindings({ handlePlayPause  })
 
   useEffect(() => {
-    let timeout
-    const handler = (e) => {
-      if (e.keyCode === 32) {
-        if (video.current.paused) {
-          video.current.play()
-        } else {
-          video.current.pause()
-          return
-        }
-        // const nextTime = getNextTime(startPosition)
-        // video.current.currentTime = nextTime    
-      }
-    }
+    const { clientWidth } = trackRef.current
+    const pos1 = getPosition(trackRef.current, iniRef.current)
+    setInit({
+      width: 0,
+      nextTime: getDragNextTime(clientWidth, pos1, video.current.duration)
+    })
+    const pos2 = getPosition(trackRef.current, endRef.current)
+    setEnds({
+      width: clientWidth,
+      nextTime: getDragNextTime(clientWidth, pos2, video.current.duration)
+    })
+  }, [])
 
-    window.addEventListener('keyup', handler)
-    return () => {
-      clearTimeout(timeout)
-      window.removeEventListener('keyup', handler)
-    }
-  }, [startPosition, restart])
+  useEffect(() => {
+    getAudioBuffer(video2, context)
+      .then(buffer => {
+        setVideoBuffer(buffer)
+      })
+  }, [context])
 
   const dragStartHandlers = {
     onStop: (e) => {
-      const position = getPosition(trackRef, iniRef)
-
-      // const nextTime = getNextTime(position)
-      
-      // videoChangeCurrentTime(nextTime)
-      setStartPosition(position)
+      const position = getPosition(trackRef.current, iniRef.current)
+      const nextTime = getDragNextTime(trackRef.current.clientWidth, position, video.current.duration)
+      if (nextTime > video.current.currentTime) {
+        setCurrentTime(nextTime)
+      }
+      setInit({ width: position, nextTime  })
     }
   };
 
   const dragEndHandlers = {
     onStop: (e) => {
-      const position = getPosition(trackRef, endRef)
-      
-      setEndPosition(position)
+      const position = getPosition(trackRef.current, endRef.current)
+      const nextTime = getDragNextTime(trackRef.current.clientWidth, position, video.current.duration)
+      if (nextTime < video.current.currentTime) {
+        setCurrentTime(nextTime)
+      }
+      setEnds({ width: position, nextTime  })
     }
   };
-  
+
   const onTimeUpdate = () => {
     const { duration, currentTime } = video.current
-    const { clientWidth } = trackRef.current
-    const position = ((clientWidth) / duration) * currentTime
-
-    if (position >= endPosition) {
-      const nextTime = getNextTime(startPosition)
-      video.current.currentTime = nextTime
+    const pos = currentTime / duration
+    if (currentTime > ends.nextTime) {
+      setCurrentTime(init.nextTime)
+      setPosition(init.position)
+      return
     }
 
-    setCursorPosition(position)
+    setPosition(pos)
   }
+
+  const onPositionChange = pos => {
+    const nextTime = getNextTime(video.current.duration, pos)
+    video.current.currentTime = nextTime
+  }
+
+  const onPlaybackRate = (value) => () => {
+    video.current.playbackRate = value
+  }
+
+  const isPaused = video && video.current && video.current.paused
+  const playbackRate = video && video.current && video.current.playbackRate
+
+  const trackWidth = trackRef.current ? trackRef.current.clientWidth : 0
+  const initBounds = { left: 0, right: ends.width }
+  const endsBounds = { left: init.width - trackWidth, right: 0 }
+
 
   return (
     <div className="container">
-      <div className="video">
-        <video controls ref={video} onTimeUpdate={onTimeUpdate}>
-          <source src={video2} type="video/mp4" />
-        </video>
+      <Video 
+        customRef={video}
+        onTimeUpdate={onTimeUpdate}
+        source={video2}
+      />
+      <div className="action">
+        {video.current.currentTime} {init.nextTime} {ends.nextTime}
       </div>
       <div className="action">
-        <div className="track" ref={trackRef}>
-          <div className="track__bar">
-            <Draggable axis="x" {...dragStartHandlers} bounds={{ left: 0, right: endPosition }}>
-              <div className="track__start" ref={iniRef}></div>
-            </Draggable>
-            <Draggable axis="x" {...dragEndHandlers} bounds={{ left: startPosition - 640, right: 0 }}>
-              <div className="track__end" ref={endRef}></div>
-            </Draggable>
-            <div className="track__current" style={{ transform: `translateX(${cursorPosition}px)` }}></div>
-          </div>
-          <div>{startPosition} | {endPosition} | {cursorPosition}</div>
+        <div className="action__button">
+          <span onClick={onPlaybackRate(0.2)} className={classnames('word', { 'word--active': playbackRate === 0.2 })}>0.2</span>
+          <span onClick={onPlaybackRate(0.3)} className={classnames('word', { 'word--active': playbackRate === 0.3 })}>0.3</span>
+          <span onClick={onPlaybackRate(0.5)} className={classnames('word', { 'word--active': playbackRate === 0.5 })}>0.5</span>
+          <span onClick={onPlaybackRate(0.7)} className={classnames('word', { 'word--active': playbackRate === 0.7 })}>0.7</span>
+          <span onClick={onPlaybackRate(1)} className={classnames('word', { 'word--active': playbackRate === 1 })}>1</span>
         </div>
+      </div>
+      <div className="track" ref={trackRef}>
+        <Draggable axis="x" {...dragStartHandlers} bounds={initBounds}>
+          <div className="track__start" ref={iniRef}></div>
+        </Draggable>
+        <Draggable axis="x" {...dragEndHandlers} bounds={endsBounds}>
+          <div className="track__end" ref={endRef}></div>
+        </Draggable>
+        <Waveform
+          buffer={videoBuffer}
+          height={80}
+          width={640}
+          markerStyle={{ color: '#ffffff', width: 1 }}
+          onPositionChange={onPositionChange}
+          plot="bar"
+          position={position}
+          responsive
+          showPosition={true}
+          waveStyle={{
+            animate: true,
+            color: '#31365d',
+            pointWidth: 1
+          }}
+        />
+      </div>
+      <div className="action">
+        <span onClick={handlePlayPause} className={classnames('word', { 'word--active': !isPaused })}>
+          {isPaused ? 'Paused' : 'Playing'}
+        </span>
       </div>
     </div>
   );

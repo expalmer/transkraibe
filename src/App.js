@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import Draggable from 'react-draggable'
 import Waveform from 'waveform-react'
 import classnames from 'classnames'
+import _get from 'lodash/get'
 
 import video2 from './videos/video2.mp4'
 
-import { getContext, getAudioBuffer, getDragNextTime, getNextTime, getPosition } from './utils'
-
-import { useKeyBindings } from './hooks/use-key-bindings'
+import { getContext, getAudioBuffer, getDragNextTime, getNextTime, getPosition, formatTime } from './utils'
 
 import { Video } from './components/video'
+import { PlaybackRateAction } from './components/playback-rate-action'
 
 function App() {
 
@@ -19,6 +19,7 @@ function App() {
   const endRef = useRef()
 
   const [position, setPosition] = useState(0)
+  const [, setLastKeyUp] = useState(0)
   
   const [init, setInit] = useState({
     width: 0,
@@ -33,18 +34,69 @@ function App() {
   const [context] = useState(getContext())
   const [videoBuffer, setVideoBuffer] = useState(null)
 
-  const setCurrentTime = (time) => video.current.currentTime = time
+  useEffect(() => {
+    getAudioBuffer(video2, context)
+      .then(buffer => {
+        setVideoBuffer(buffer)
+      })
+  }, [context])
 
-  const handlePlayPause = () => {
-    if (video.current.paused) {
-      video.current.play()
-    } else {
-      video.current.pause()
+
+  const onPlaybackRate = useCallback((value) => {
+    if (!video.current) {
+      return 
+    }
+    video.current.playbackRate = value
+  }, [])
+
+
+  const handleRestart = useCallback(() => {
+    const position = getPosition(trackRef.current, iniRef.current)
+    const nextTime = getDragNextTime(trackRef.current.clientWidth, position, video.current.duration)
+    setCurrentTime(nextTime)
+    video.current.play()
+  }, [])
+
+  const handlePlayPause = useCallback((isTwice) => {
+    if (isTwice) {
+      handleRestart()
       return
     }
-  }
+    video.current.paused ? video.current.play() : video.current.pause()
+  }, [handleRestart])
 
-  useKeyBindings({ handlePlayPause  })
+  const handleBack = useCallback(() => {
+    const nextTime = video.current.currentTime - 5
+    setCurrentTime(nextTime < init.nextTime ? init.nextTime : nextTime)
+  }, [init.nextTime])
+  
+  const handleForward = useCallback(() => {
+    const nextTime = video.current.currentTime + 5
+    setCurrentTime(nextTime > ends.nextTime ? ends.nextTime : nextTime)
+  }, [ends.nextTime])
+
+  const handleKeyUp = useCallback(({ keyCode }) => {  
+    setLastKeyUp(last => {
+      const now = Date.now()
+      const isTwice = (now - last) < 500 
+
+      if (keyCode === 32) handlePlayPause(isTwice)
+      if (keyCode === 37) handleBack(isTwice)
+      if (keyCode === 39) handleForward(isTwice)
+    
+      return now
+    })
+
+  }, [handlePlayPause, handleBack, handleForward])
+
+  useEffect(() => {
+    window.addEventListener('keyup', handleKeyUp)
+    return () => {
+      window.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [handleKeyUp])
+  
+  const setCurrentTime = (time) => video.current.currentTime = time
 
   useEffect(() => {
     const { clientWidth } = trackRef.current
@@ -59,13 +111,6 @@ function App() {
       nextTime: getDragNextTime(clientWidth, pos2, video.current.duration)
     })
   }, [])
-
-  useEffect(() => {
-    getAudioBuffer(video2, context)
-      .then(buffer => {
-        setVideoBuffer(buffer)
-      })
-  }, [context])
 
   const dragStartHandlers = {
     onStop: (e) => {
@@ -106,10 +151,6 @@ function App() {
     video.current.currentTime = nextTime
   }
 
-  const onPlaybackRate = (value) => () => {
-    video.current.playbackRate = value
-  }
-
   const isPaused = video && video.current && video.current.paused
   const playbackRate = video && video.current && video.current.playbackRate
 
@@ -126,16 +167,10 @@ function App() {
         source={video2}
       />
       <div className="action">
-        {video.current.currentTime} {init.nextTime} {ends.nextTime}
+        <span className="word">{formatTime(_get(video, 'current.currentTime', 0))}</span>
       </div>
       <div className="action">
-        <div className="action__button">
-          <span onClick={onPlaybackRate(0.2)} className={classnames('word', { 'word--active': playbackRate === 0.2 })}>0.2</span>
-          <span onClick={onPlaybackRate(0.3)} className={classnames('word', { 'word--active': playbackRate === 0.3 })}>0.3</span>
-          <span onClick={onPlaybackRate(0.5)} className={classnames('word', { 'word--active': playbackRate === 0.5 })}>0.5</span>
-          <span onClick={onPlaybackRate(0.7)} className={classnames('word', { 'word--active': playbackRate === 0.7 })}>0.7</span>
-          <span onClick={onPlaybackRate(1)} className={classnames('word', { 'word--active': playbackRate === 1 })}>1</span>
-        </div>
+        <PlaybackRateAction onPlaybackRate={onPlaybackRate} playbackRate={playbackRate} />
       </div>
       <div className="track" ref={trackRef}>
         <Draggable axis="x" {...dragStartHandlers} bounds={initBounds}>
@@ -162,7 +197,10 @@ function App() {
         />
       </div>
       <div className="action">
-        <span onClick={handlePlayPause} className={classnames('word', { 'word--active': !isPaused })}>
+        <span
+          onClick={() => handlePlayPause()}
+          className={classnames('keyboard__button keyboard__button--block', { 'keyboard__button--active': !isPaused })}
+        >
           {isPaused ? 'Paused' : 'Playing'}
         </span>
       </div>

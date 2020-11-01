@@ -32,3 +32,7 @@ export const getDragNextTime = (clientWidth, position, duration) => {
   const pos = 1 / clientWidth * position
   return getNextTime(duration, pos)
 }
+
+export const formatTime = (time = 0) => {
+  return Number(time).toFixed(2)
+}

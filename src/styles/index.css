@@ -128,3 +128,35 @@ code {
   width: 1px;
   background-color: black;
 } */
+
+.keyboard {
+  display: flex;
+  justify-content: center;
+}
+
+.keyboard__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px 6px;
+  font-size: 14px;
+  color: #fff;
+  border: solid 1px #fff;
+  border-radius: 4px;
+  margin: 0 6px;
+  height: 34px;
+  width: 40px;
+  cursor: pointer;
+  background: transparent;
+  text-decoration: none;
+  outline: none;
+}
+
+.keyboard__button--active {
+  background: #fff;
+  color: #0e1422;
+}
+
+.keyboard__button--block {
+  width: 100%;
+}

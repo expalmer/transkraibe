@@ -24,12 +24,14 @@ export const useVideoActions = ({ source }) => {
   const changePlayPause = useCallback(({ isTwice = false } = {}) => {
     if (!videoRef.current) return
     if (isTwice) {
-      changeCurrentTime(0)
+      const { duration } = videoRef.current
+      const nextTime = duration * startPosition
+      changeCurrentTime(nextTime)
     }
     const isPaused = videoRef.current.paused
     isPaused ? videoRef.current.play() : videoRef.current.pause()
     setIsPaused(isPaused)
-  }, [])
+  }, [startPosition])
 
   const changePosition = position => {
     const { duration } = videoRef.current

@@ -9,7 +9,12 @@ import {
 
 import { useVideoActions } from './hooks/use-video-actions'
 
-import videoMp4 from './videos/video.mp4'
+//import videoMp4 from './videos/vinicius-ferrari.mp4'
+// import videoMp4 from './videos/hudsondavis_.mp4'
+// import videoMp4 from './videos/darryl-syms.mp4'
+// import videoMp4 from './videos/ruben.mp4'
+// import videoMp4 from './videos/max-magana.mp4'
+import videoMp4 from './videos/neo-soul.mp4'
 
 function App() {
   const {

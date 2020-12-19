@@ -1,0 +1,33 @@
+.video-speed-control {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+}
+
+.video-speed-control__item {
+  background-color: #000;
+  color: #444;
+  border: solid 1px #101010;
+  width: 40px;
+  padding: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: -1px;
+  outline: none;
+  cursor: pointer;
+}
+
+.video-speed-control__item--active,
+.video-speed-control__item:hover {
+  background-color: #fff;
+}
+
+.video-speed-control__item:first-of-type {
+  border-radius: 12px 0 0 12px;
+  margin-left: 0;
+}
+
+.video-speed-control__item:last-of-type {
+  border-radius: 0 12px 12px 0;
+}

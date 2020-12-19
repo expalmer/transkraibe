@@ -1,0 +1,43 @@
+.video-tempo {
+  position: relative;
+  max-width: 640px;
+  max-height: 80px;
+}
+
+.video-tempo__start,
+.video-tempo__end {
+  position: absolute;
+  top: 0;
+  height: 80px;
+  width: 0px;
+  z-index: 1;
+}
+
+.video-tempo__start:before,
+.video-tempo__end:before {
+  position: absolute;
+  content: '';
+  width: 24px;
+  height: 80px;
+  background-color: red;
+}
+
+.video-tempo__start {
+  left: 0;
+}
+
+.video-tempo__start:before {
+  top: 0;
+  left: -24px;
+  border-radius: 24px 0 0 24px;
+}
+
+.video-tempo__end {
+  right: 0;
+}
+
+.video-tempo__end:before {
+  top: 0;
+  right: -24px;
+  border-radius: 0 24px 24px 0;
+}

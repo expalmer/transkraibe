@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-/src/videos
+/src/videos_all
 # dependencies
 /node_modules
 /.pnp

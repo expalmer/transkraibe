@@ -1,0 +1,45 @@
+.video-markers {
+  position: relative;
+  margin: 0 24px;
+  padding: 0 4px;
+  border: solid 1px #000;
+  height: 40px;
+}
+
+.video-markers__start,
+.video-markers__end {
+  position: absolute;
+  top: 0;
+  height: 40px;
+  width: 0px;
+  z-index: 1;
+}
+
+.video-markers__start:before,
+.video-markers__end:before {
+  position: absolute;
+  content: '';
+  width: 24px;
+  height: 40px;
+  background-color: red;
+}
+
+.video-markers__start {
+  left: 0;
+}
+
+.video-markers__start:before {
+  top: 0;
+  left: -24px;
+  border-radius: 24px 0 0 24px;
+}
+
+.video-markers__end {
+  right: 0;
+}
+
+.video-markers__end:before {
+  top: 0;
+  right: -24px;
+  border-radius: 0 24px 24px 0;
+}

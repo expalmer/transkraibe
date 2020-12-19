@@ -1,66 +1,90 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
-import { 
-  PlaybackRateAction,
-  PlayPauseButton,
-  Video,
-  TrackSound
+import { videosSource } from './videos'
+
+import { getAudioBuffer, getContext } from './utils'
+
+import {
+  VideoSources,
+  VideoWrapper,
+  VideoTag,
+  VideoSpeedControls,
+  VideoTempoControls,
+  VideoWave,
+  VideoMarkers
 } from './components'
 
 import { useVideoActions } from './hooks/use-video-actions'
 
-//import videoMp4 from './videos/vinicius-ferrari.mp4'
-// import videoMp4 from './videos/hudsondavis_.mp4'
-// import videoMp4 from './videos/darryl-syms.mp4'
-// import videoMp4 from './videos/ruben.mp4'
-// import videoMp4 from './videos/max-magana.mp4'
-import videoMp4 from './videos/neo-soul.mp4'
-
 function App() {
+  
+  const [videos] = useState(videosSource)
+  const [currentVideo, setCurrentVideo] = useState(null)
+  const [video, setVideo] = useState({
+    buffer: null,
+    source: null
+  })
+
+  useEffect(() => {
+    if (currentVideo) {
+      getAudioBuffer(currentVideo, getContext())
+        .then(buffer => {
+          setVideo({
+            buffer,
+            source: currentVideo
+          })
+        })
+    }
+    return () => {
+      setVideo({
+        buffer: null,
+        source: null,
+      })
+    }
+  }, [currentVideo])
+
   const {
     videoRef,
-    videoBuffer,
     videoOnTimeUpdate,
+    playbackRate,
     changePlaybackRate,
-    changePlayPause,
     changePosition,
     changeStartPosition,
     changeEndPosition,
-    currentTime,
-    playbackRate,
-    isPaused,
-    position
-  } = useVideoActions({ source: videoMp4 })
-
+    time,
+    position,
+    startPosition,
+    endPosition
+  } = useVideoActions()
+  
   return (
     <div className="container">
-      <Video 
-        customRef={videoRef} 
-        onTimeUpdate={videoOnTimeUpdate}
-        source={videoMp4}
-      />
-      <div className="action">
-        <span className="word">{currentTime} &nbsp; <strong>rate: {playbackRate}</strong></span>
-      </div>
-      <div className="action">
-        <PlaybackRateAction
+      <VideoSources currentVideo={currentVideo} videos={videos} handleSelectVideo={setCurrentVideo} />
+      <VideoWrapper>
+        <VideoTag
+          videoRef={videoRef}
+          source={video.source}
+          videoOnTimeUpdate={videoOnTimeUpdate}
+        />
+        <VideoSpeedControls
+          hasVideo={!!video.source}
+          playbackRate={playbackRate}
           changePlaybackRate={changePlaybackRate}
-          playbackRate={playbackRate} 
         />
-      </div>
-      <TrackSound
-        videoBuffer={videoBuffer}
-        position={position}
-        changePosition={changePosition}
-        changeStartPosition={changeStartPosition}
-        changeEndPosition={changeEndPosition}
-      />
-      <div className="action">
-        <PlayPauseButton
-          handlePlayPause={changePlayPause}
-          isPaused={isPaused}
-        />
-      </div>
+        <VideoTempoControls>
+          <VideoMarkers 
+            startPosition={startPosition}
+            endPosition={endPosition}
+            changeStartPosition={changeStartPosition}
+            changeEndPosition={changeEndPosition}
+          />
+          <VideoWave
+            videoBuffer={video.buffer} 
+            changePosition={changePosition}
+            position={position}
+          />
+        </VideoTempoControls>
+      </VideoWrapper>
     </div>
   );
 }

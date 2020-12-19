@@ -1,0 +1,14 @@
+.video-sources {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.video-sources__select {
+  background: #000;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+}

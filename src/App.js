@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 
-import { videosSource } from './videos'
+import { videosSource } from "./videos";
 
-import { getAudioBuffer, getContext } from './utils'
+import { getAudioBuffer, getContext } from "./utils";
 
 import {
   VideoSources,
@@ -11,37 +11,35 @@ import {
   VideoSpeedControls,
   VideoTempoControls,
   VideoWave,
-  VideoMarkers
-} from './components'
+  VideoMarkers,
+} from "./components";
 
-import { useVideoActions } from './hooks/use-video-actions'
+import { useVideoActions } from "./hooks/use-video-actions";
 
 function App() {
-  
-  const [videos] = useState(videosSource)
-  const [currentVideo, setCurrentVideo] = useState(null)
+  const [videos] = useState(videosSource);
+  const [currentVideo, setCurrentVideo] = useState(null);
   const [video, setVideo] = useState({
     buffer: null,
-    source: null
-  })
+    source: null,
+  });
 
   useEffect(() => {
     if (currentVideo) {
-      getAudioBuffer(currentVideo, getContext())
-        .then(buffer => {
-          setVideo({
-            buffer,
-            source: currentVideo
-          })
-        })
+      getAudioBuffer(currentVideo, getContext()).then((buffer) => {
+        setVideo({
+          buffer,
+          source: currentVideo,
+        });
+      });
     }
     return () => {
       setVideo({
         buffer: null,
         source: null,
-      })
-    }
-  }, [currentVideo])
+      });
+    };
+  }, [currentVideo]);
 
   const {
     videoRef,
@@ -51,15 +49,18 @@ function App() {
     changePosition,
     changeStartPosition,
     changeEndPosition,
-    time,
     position,
     startPosition,
-    endPosition
-  } = useVideoActions()
-  
+    endPosition,
+  } = useVideoActions();
+
   return (
     <div className="container">
-      <VideoSources currentVideo={currentVideo} videos={videos} handleSelectVideo={setCurrentVideo} />
+      <VideoSources
+        currentVideo={currentVideo}
+        videos={videos}
+        handleSelectVideo={setCurrentVideo}
+      />
       <VideoWrapper>
         <VideoTag
           videoRef={videoRef}
@@ -72,14 +73,14 @@ function App() {
           changePlaybackRate={changePlaybackRate}
         />
         <VideoTempoControls>
-          <VideoMarkers 
+          <VideoMarkers
             startPosition={startPosition}
             endPosition={endPosition}
             changeStartPosition={changeStartPosition}
             changeEndPosition={changeEndPosition}
           />
           <VideoWave
-            videoBuffer={video.buffer} 
+            videoBuffer={video.buffer}
             changePosition={changePosition}
             position={position}
           />

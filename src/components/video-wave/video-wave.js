@@ -1,6 +1,6 @@
-import Waveform from 'waveform-react'
+import Waveform from "waveform-react";
 
-import './video-wave.css'
+import "./video-wave.css";
 
 export const VideoWave = ({
   videoBuffer,
@@ -13,7 +13,7 @@ export const VideoWave = ({
         buffer={videoBuffer}
         height={80}
         width={640}
-        markerStyle={{ color: '#ffffff', width: 1 }}
+        markerStyle={{ color: "#ffffff", width: 1 }}
         onPositionChange={changePosition}
         plot="bar"
         position={position}
@@ -22,10 +22,10 @@ export const VideoWave = ({
         waveStyle={{
           zIndex: -1,
           animate: true,
-          color: '#000',
-          pointWidth: 1
+          color: "#000",
+          pointWidth: 1,
         }}
       />
     </div>
-  )
-}
+  );
+};

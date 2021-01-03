@@ -1,13 +1,13 @@
-import leticiaNeoSoul from './leticia-neo-soul.mp4'
-import asatocontestDarrylSyms from './asatocontest-darryl-syms.mp4'
+import leticiaNeoSoul from "./leticia-neo-soul.mp4";
+import asatocontestDarrylSyms from "./asatocontest-darryl-syms.mp4";
 
 export const videosSource = [
   {
-    name: 'Asato Contest Darryl Syms',
+    name: "Asato Contest Darryl Syms",
     source: asatocontestDarrylSyms,
   },
   {
-    name: 'Leticia Filizzola NeoSoul',
+    name: "Leticia Filizzola NeoSoul",
     source: leticiaNeoSoul,
   },
-]
+];

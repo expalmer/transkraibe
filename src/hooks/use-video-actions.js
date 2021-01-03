@@ -1,83 +1,82 @@
-import { useRef, useState, useEffect, useCallback } from "react"
+import { useRef, useState } from "react";
 
 export const useVideoActions = () => {
-
-  const videoRef = useRef()
+  const videoRef = useRef();
   const [video, setVideo] = useState({
     time: 0,
     position: 0,
-  })
-  
-  const [playbackRate, setPlaybackRate] = useState(1)
-  const [startPosition, setStartPosition] = useState(0)
-  const [endPosition, setEndPosition] = useState(1)
+  });
 
-  const setCurrentTime = (time) => videoRef.current.currentTime = time
-  
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [startPosition, setStartPosition] = useState(0);
+  const [endPosition, setEndPosition] = useState(1);
+
+  const setCurrentTime = (time) => (videoRef.current.currentTime = time);
+
   const changePlaybackRate = (rate) => {
-    videoRef.current.playbackRate = rate
-    setPlaybackRate(rate)
-  }
+    videoRef.current.playbackRate = rate;
+    setPlaybackRate(rate);
+  };
 
   const videoOnTimeUpdate = () => {
-    const { duration, currentTime } = videoRef.current
-    const position = currentTime / duration
-    
+    const { duration, currentTime } = videoRef.current;
+    const position = currentTime / duration;
+
     if (position > endPosition) {
-      changePosition(startPosition)
-      return
+      changePosition(startPosition);
+      return;
     }
-    
+
     setVideo({
       time: currentTime,
-      position
-    })
-  }
+      position,
+    });
+  };
 
   const changePosition = (nextPosition) => {
-    const { duration } = videoRef.current
-    const nextTime = duration * nextPosition
+    const { duration } = videoRef.current;
+    const nextTime = duration * nextPosition;
 
     if (nextPosition < startPosition) {
-      return
+      return;
     }
 
     if (nextPosition > endPosition) {
-      return
+      return;
     }
 
-    setCurrentTime(nextTime)  
+    setCurrentTime(nextTime);
     setVideo({
       time: nextTime,
-      position: nextPosition
-    })
-  }
+      position: nextPosition,
+    });
+  };
 
   const changeStartPosition = (nextPosition) => {
     if (nextPosition > video.position) {
-      changePosition(nextPosition)
+      changePosition(nextPosition);
     }
-    setStartPosition(nextPosition)
-  }
+    setStartPosition(nextPosition);
+  };
 
   const changeEndPosition = (nextPosition) => {
     if (nextPosition < video.position) {
-      changePosition(nextPosition)
+      changePosition(nextPosition);
     }
-    setEndPosition(nextPosition)
-  }
-  
+    setEndPosition(nextPosition);
+  };
+
   return {
     videoRef,
     playbackRate,
     changePlaybackRate,
     changePosition,
     changeStartPosition,
-    changeEndPosition, 
+    changeEndPosition,
     videoOnTimeUpdate,
     time: video.time,
     position: video.position,
     startPosition,
     endPosition,
-  }
-}
+  };
+};

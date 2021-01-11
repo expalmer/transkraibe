@@ -1,4 +1,21 @@
 # Transkraibe
 
-1. Clone the repo
-2. Run `npm install && npm start`
+## Setup
+
+- Use the correct NodeJs version. We recommend using [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) for this:
+
+```
+nvm install
+```
+
+- Install dependencies:
+
+```
+npm install
+```
+
+## Run
+
+```
+npm start
+```

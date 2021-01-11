@@ -11,8 +11,8 @@ export const VideoSources = ({ videos, handleSelectVideo }) => {
   const onSelectedFile = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      const objectUrl = URL.createObjectURL(selectedFile);
-      handleSelectVideo(objectUrl);
+      const selectedVideoUrl = URL.createObjectURL(selectedFile);
+      handleSelectVideo(selectedVideoUrl);
     }
   };
 
@@ -25,7 +25,7 @@ export const VideoSources = ({ videos, handleSelectVideo }) => {
           accept="video/mp4"
           onChange={onSelectedFile}
         />
-        Upload a mp4 video
+        Upload an mp4 video
       </label>
       <p>or</p>
       <select

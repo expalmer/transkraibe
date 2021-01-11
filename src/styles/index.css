@@ -20,10 +20,6 @@ code {
   justify-content: center;
 }
 
-label {
-  margin-right: 10px;
-}
-
 input[type="file"] {
   display: none;
 }

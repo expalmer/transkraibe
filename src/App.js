@@ -56,11 +56,7 @@ function App() {
 
   return (
     <div className="container">
-      <VideoSources
-        currentVideo={currentVideo}
-        videos={videos}
-        handleSelectVideo={setCurrentVideo}
-      />
+      <VideoSources videos={videos} handleSelectVideo={setCurrentVideo} />
       <VideoWrapper>
         <VideoTag
           videoRef={videoRef}

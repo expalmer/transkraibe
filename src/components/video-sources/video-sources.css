@@ -1,7 +1,9 @@
 .video-sources {
-  display: flex;
   justify-content: center;
   padding: 16px;
+  color: white;
+  font-weight: 500;
+  text-align: center;
 }
 
 .video-sources__select {
@@ -11,4 +13,6 @@
   border-radius: 12px;
   border: none;
   outline: none;
+  font-size: 1em;
+  cursor: pointer;
 }

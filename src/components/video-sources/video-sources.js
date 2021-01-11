@@ -10,13 +10,17 @@ export const VideoSources = ({ videos, handleSelectVideo }) => {
 
   return (
     <div className="video-sources">
-      <label for="video-sample-selector">Select a sample:</label>
+      <label for="video-input-file" className="video-sources__select">
+        <input id="video-input-file" type="file" accept="video/mp4" />
+        Upload a mp4 video
+      </label>
+      <p>or</p>
       <select
         id="video-sample-selector"
         className="video-sources__select"
         onChange={handleSelect}
       >
-        <option value="">-</option>
+        <option value="">Select a sample</option>
         {videos.map(({ name }) => (
           <option key={name} value={name}>
             {name}

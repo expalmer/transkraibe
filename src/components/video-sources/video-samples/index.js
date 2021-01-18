@@ -1,7 +1,7 @@
 import leticiaNeoSoul from "./leticia-neo-soul.mp4";
 import asatocontestDarrylSyms from "./asatocontest-darryl-syms.mp4";
 
-export const videosSource = [
+export const videoSamples = [
   {
     name: "Asato Contest Darryl Syms",
     source: asatocontestDarrylSyms,

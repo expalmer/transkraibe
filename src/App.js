@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import { videosSource } from "./videos";
-
 import { getAudioBuffer, getContext } from "./utils";
 
 import {
@@ -17,19 +15,18 @@ import {
 import { useVideoActions } from "./hooks/use-video-actions";
 
 function App() {
-  const [videos] = useState(videosSource);
-  const [currentVideo, setCurrentVideo] = useState(null);
+  const [videoSource, setVideoSource] = useState(null);
   const [video, setVideo] = useState({
     buffer: null,
     source: null,
   });
 
   useEffect(() => {
-    if (currentVideo) {
-      getAudioBuffer(currentVideo, getContext()).then((buffer) => {
+    if (videoSource) {
+      getAudioBuffer(videoSource, getContext()).then((buffer) => {
         setVideo({
           buffer,
-          source: currentVideo,
+          source: videoSource,
         });
       });
     }
@@ -39,7 +36,7 @@ function App() {
         source: null,
       });
     };
-  }, [currentVideo]);
+  }, [videoSource]);
 
   const {
     videoRef,
@@ -56,7 +53,7 @@ function App() {
 
   return (
     <div className="container">
-      <VideoSources videos={videos} handleSelectVideo={setCurrentVideo} />
+      <VideoSources onSelectedVideoSource={setVideoSource} />
       <VideoWrapper>
         <Player
           videoRef={videoRef}

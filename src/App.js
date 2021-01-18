@@ -7,7 +7,7 @@ import { getAudioBuffer, getContext } from "./utils";
 import {
   VideoSources,
   VideoWrapper,
-  VideoTag,
+  Player,
   VideoSpeedControls,
   VideoTempoControls,
   VideoWave,
@@ -58,7 +58,7 @@ function App() {
     <div className="container">
       <VideoSources videos={videos} handleSelectVideo={setCurrentVideo} />
       <VideoWrapper>
-        <VideoTag
+        <Player
           videoRef={videoRef}
           source={video.source}
           videoOnTimeUpdate={videoOnTimeUpdate}

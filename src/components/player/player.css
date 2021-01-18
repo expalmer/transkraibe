@@ -1,11 +1,11 @@
-.video-tag {
+.player {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
   height: 0;
   background: #000;
 }
 
-.video-tag video {
+.player video {
   position: absolute;
   top: 0;
   left: 0;

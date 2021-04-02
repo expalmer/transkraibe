@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { getAudioBuffer, getContext } from "./utils";
+import { getAudioBuffer } from "./utils";
 
 import {
   VideoSources,
@@ -16,25 +16,14 @@ import { useVideoActions } from "./hooks/use-video-actions";
 
 function App() {
   const [videoSource, setVideoSource] = useState(null);
-  const [video, setVideo] = useState({
-    buffer: null,
-    source: null,
-  });
+  const [videoAudioBuffer, setVideoAudioBuffer] = useState(null);
 
   useEffect(() => {
     if (videoSource) {
-      getAudioBuffer(videoSource, getContext()).then((buffer) => {
-        setVideo({
-          buffer,
-          source: videoSource,
-        });
-      });
+      getAudioBuffer(videoSource).then(setVideoAudioBuffer);
     }
     return () => {
-      setVideo({
-        buffer: null,
-        source: null,
-      });
+      setVideoAudioBuffer(null);
     };
   }, [videoSource]);
 
@@ -57,11 +46,11 @@ function App() {
       <VideoWrapper>
         <Player
           videoRef={videoRef}
-          source={video.source}
+          source={videoSource}
           videoOnTimeUpdate={videoOnTimeUpdate}
         />
         <VideoSpeedControls
-          hasVideo={!!video.source}
+          hasVideo={!!videoSource}
           playbackRate={playbackRate}
           changePlaybackRate={changePlaybackRate}
         />
@@ -73,7 +62,7 @@ function App() {
             changeEndPosition={changeEndPosition}
           />
           <VideoWave
-            videoBuffer={video.buffer}
+            videoBuffer={videoAudioBuffer}
             changePosition={changePosition}
             position={position}
           />

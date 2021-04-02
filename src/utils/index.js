@@ -1,20 +1,21 @@
-export const getAudioBuffer = async (path, context) => {
-  const response = await fetch(path);
-  const audioData = await response.arrayBuffer();
-  return new Promise((resolve, reject) => {
-    context.decodeAudioData(audioData, (buffer) => {
-      return resolve(buffer);
-    });
-  });
-};
-
-export const getContext = () => {
-  window.AudioContext =
+export const createAudioContext = () => {
+  const AudioContext =
     window.AudioContext ||
     window.webkitAudioContext ||
     window.mozAudioContext ||
     window.oAudioContext;
   return new AudioContext();
+};
+
+export const getAudioBuffer = async (path) => {
+  const audioContext = createAudioContext();
+  const response = await fetch(path);
+  const audioData = await response.arrayBuffer();
+  return new Promise((resolve, reject) => {
+    audioContext.decodeAudioData(audioData, (buffer) => {
+      return resolve(buffer);
+    });
+  });
 };
 
 export const getPosition = (track, pointer) => {

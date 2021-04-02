@@ -1,18 +1,20 @@
 import "./video-sources.css";
 
-export const VideoSources = ({ videos, handleSelectVideo }) => {
+import { videoSamples } from "./video-samples";
+
+export const VideoSources = ({ onSelectedVideoSource }) => {
   const onSelectedSample = (e) => {
     const { value } = e.target;
     if (!value) return;
-    const video = videos.find((x) => x.name === value);
-    handleSelectVideo(video.source);
+    const video = videoSamples.find((x) => x.name === value);
+    onSelectedVideoSource(video.source);
   };
 
   const onSelectedFile = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       const selectedVideoUrl = URL.createObjectURL(selectedFile);
-      handleSelectVideo(selectedVideoUrl);
+      onSelectedVideoSource(selectedVideoUrl);
     }
   };
 
@@ -34,7 +36,7 @@ export const VideoSources = ({ videos, handleSelectVideo }) => {
         onChange={onSelectedSample}
       >
         <option value="">Select a sample</option>
-        {videos.map(({ name }) => (
+        {videoSamples.map(({ name }) => (
           <option key={name} value={name}>
             {name}
           </option>

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { videosSource } from "./videos";
-
-import { getAudioBuffer, getContext } from "./utils";
+import { getAudioBuffer } from "./utils";
 
 import {
   VideoSources,
@@ -17,29 +15,17 @@ import {
 import { useVideoActions } from "./hooks/use-video-actions";
 
 function App() {
-  const [videos] = useState(videosSource);
-  const [currentVideo, setCurrentVideo] = useState(null);
-  const [video, setVideo] = useState({
-    buffer: null,
-    source: null,
-  });
+  const [videoSource, setVideoSource] = useState(null);
+  const [videoAudioBuffer, setVideoAudioBuffer] = useState(null);
 
   useEffect(() => {
-    if (currentVideo) {
-      getAudioBuffer(currentVideo, getContext()).then((buffer) => {
-        setVideo({
-          buffer,
-          source: currentVideo,
-        });
-      });
+    if (videoSource) {
+      getAudioBuffer(videoSource).then(setVideoAudioBuffer);
     }
     return () => {
-      setVideo({
-        buffer: null,
-        source: null,
-      });
+      setVideoAudioBuffer(null);
     };
-  }, [currentVideo]);
+  }, [videoSource]);
 
   const {
     videoRef,
@@ -56,15 +42,15 @@ function App() {
 
   return (
     <div className="container">
-      <VideoSources videos={videos} handleSelectVideo={setCurrentVideo} />
+      <VideoSources onSelectedVideoSource={setVideoSource} />
       <VideoWrapper>
         <Player
           videoRef={videoRef}
-          source={video.source}
+          source={videoSource}
           videoOnTimeUpdate={videoOnTimeUpdate}
         />
         <VideoSpeedControls
-          hasVideo={!!video.source}
+          hasVideo={!!videoSource}
           playbackRate={playbackRate}
           changePlaybackRate={changePlaybackRate}
         />
@@ -76,7 +62,7 @@ function App() {
             changeEndPosition={changeEndPosition}
           />
           <VideoWave
-            videoBuffer={video.buffer}
+            videoBuffer={videoAudioBuffer}
             changePosition={changePosition}
             position={position}
           />

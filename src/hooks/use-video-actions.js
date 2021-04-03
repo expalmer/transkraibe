@@ -11,6 +11,11 @@ export const useVideoActions = () => {
   const [startPosition, setStartPosition] = useState(0);
   const [endPosition, setEndPosition] = useState(1);
 
+  const resetBoundaries = () => {
+    setStartPosition(0);
+    setEndPosition(1);
+  };
+
   const setCurrentTime = (time) => (videoRef.current.currentTime = time);
 
   const changePlaybackRate = (rate) => {
@@ -78,5 +83,6 @@ export const useVideoActions = () => {
     position: video.position,
     startPosition,
     endPosition,
+    resetBoundaries,
   };
 };

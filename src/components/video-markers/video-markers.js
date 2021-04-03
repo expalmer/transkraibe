@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Draggable from "react-draggable";
 
 import "./video-markers.css";
@@ -6,9 +6,8 @@ import "./video-markers.css";
 import { getPosition } from "../../utils";
 
 export const VideoMarkers = ({
-  videoBuffer,
-  position,
-  changePosition = () => {},
+  startPosition,
+  endPosition,
   changeStartPosition = () => {},
   changeEndPosition = () => {},
 }) => {
@@ -38,6 +37,7 @@ export const VideoMarkers = ({
         axis="x"
         {...dragStartHandlers}
         bounds={{ left: 0, right: 640 }}
+        position={{ x: 640 * startPosition, y: 0 }}
       >
         <div className="video-markers__start" ref={startRef}></div>
       </Draggable>
@@ -45,6 +45,7 @@ export const VideoMarkers = ({
         axis="x"
         {...dragEndHandlers}
         bounds={{ left: -640, right: 0 }}
+        position={{ x: 640 * (endPosition - 1), y: 0 }}
       >
         <div className="video-markers__end" ref={endRef}></div>
       </Draggable>

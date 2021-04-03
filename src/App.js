@@ -38,6 +38,7 @@ function App() {
     position,
     startPosition,
     endPosition,
+    resetBoundaries,
   } = useVideoActions();
 
   return (
@@ -47,7 +48,8 @@ function App() {
         <Player
           videoRef={videoRef}
           source={videoSource}
-          videoOnTimeUpdate={videoOnTimeUpdate}
+          onVideoTimeUpdate={videoOnTimeUpdate}
+          onVideoLoadStart={resetBoundaries}
         />
         <VideoSpeedControls
           hasVideo={!!videoSource}

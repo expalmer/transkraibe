@@ -13,6 +13,7 @@ import {
 } from "./components";
 
 import { useVideoActions } from "./hooks/use-video-actions";
+import { useVideoState } from "./hooks";
 
 function App() {
   const [videoSource, setVideoSource] = useState(null);
@@ -20,12 +21,20 @@ function App() {
 
   useEffect(() => {
     if (videoSource) {
-      getAudioBuffer(videoSource).then(setVideoAudioBuffer);
+      getAudioBuffer(videoSource)
+        .then(setVideoAudioBuffer)
+        .catch((err) => console.error(err));
     }
     return () => {
       setVideoAudioBuffer(null);
     };
   }, [videoSource]);
+
+  const {
+    isVideoLoaded,
+    setVideoLoadedState,
+    resetVideoState,
+  } = useVideoState();
 
   const {
     videoRef,
@@ -38,37 +47,47 @@ function App() {
     position,
     startPosition,
     endPosition,
-    resetBoundaries,
+    resetVideoControls,
   } = useVideoActions();
 
   return (
     <div className="container">
       <VideoSources onSelectedVideoSource={setVideoSource} />
       <VideoWrapper>
-        <Player
-          videoRef={videoRef}
-          source={videoSource}
-          onVideoTimeUpdate={videoOnTimeUpdate}
-          onVideoLoadStart={resetBoundaries}
-        />
-        <VideoSpeedControls
-          hasVideo={!!videoSource}
-          playbackRate={playbackRate}
-          changePlaybackRate={changePlaybackRate}
-        />
-        <VideoTempoControls>
-          <VideoMarkers
-            startPosition={startPosition}
-            endPosition={endPosition}
-            changeStartPosition={changeStartPosition}
-            changeEndPosition={changeEndPosition}
+        {videoAudioBuffer && (
+          <Player
+            videoRef={videoRef}
+            source={videoSource}
+            onVideoTimeUpdate={videoOnTimeUpdate}
+            onVideoLoadStart={() => {
+              resetVideoState();
+              resetVideoControls();
+            }}
+            onLoaded={() => setVideoLoadedState(true)}
           />
-          <VideoWave
-            videoBuffer={videoAudioBuffer}
-            changePosition={changePosition}
-            position={position}
-          />
-        </VideoTempoControls>
+        )}
+        {videoAudioBuffer && isVideoLoaded && (
+          <>
+            <VideoSpeedControls
+              hasVideo={!!videoSource}
+              playbackRate={playbackRate}
+              changePlaybackRate={changePlaybackRate}
+            />
+            <VideoTempoControls>
+              <VideoMarkers
+                startPosition={startPosition}
+                endPosition={endPosition}
+                changeStartPosition={changeStartPosition}
+                changeEndPosition={changeEndPosition}
+              />
+              <VideoWave
+                videoBuffer={videoAudioBuffer}
+                changePosition={changePosition}
+                position={position}
+              />
+            </VideoTempoControls>
+          </>
+        )}
       </VideoWrapper>
     </div>
   );

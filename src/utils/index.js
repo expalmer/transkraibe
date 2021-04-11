@@ -12,14 +12,14 @@ export const getAudioBuffer = async (path) => {
   const response = await fetch(path);
   const audioData = await response.arrayBuffer();
   return new Promise((resolve, reject) => {
-    audioContext.decodeAudioData(audioData, (buffer) => {
-      return resolve(buffer);
-    });
+    audioContext.decodeAudioData(
+      audioData,
+      (buffer) => {
+        resolve(buffer);
+      },
+      (err) => {
+        reject(err);
+      }
+    );
   });
-};
-
-export const getPosition = (track, pointer) => {
-  const left1 = track.getBoundingClientRect().left;
-  const left2 = pointer.getBoundingClientRect().left;
-  return left2 - left1;
 };

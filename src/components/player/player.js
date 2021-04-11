@@ -5,6 +5,7 @@ export const Player = ({
   source = null,
   onVideoTimeUpdate = () => {},
   onVideoLoadStart = () => {},
+  onLoaded = () => {},
   controls = true,
 }) => {
   return (
@@ -15,6 +16,7 @@ export const Player = ({
           ref={videoRef}
           onTimeUpdate={onVideoTimeUpdate}
           onLoadStart={onVideoLoadStart}
+          onLoadedData={onLoaded}
           controls={controls}
           autoPlay
         >

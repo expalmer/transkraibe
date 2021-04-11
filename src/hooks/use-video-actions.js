@@ -1,20 +1,17 @@
 import { useRef, useState } from "react";
 
+const videoInitialState = {
+  time: 0,
+  position: 0,
+};
+
 export const useVideoActions = () => {
   const videoRef = useRef();
-  const [video, setVideo] = useState({
-    time: 0,
-    position: 0,
-  });
+  const [video, setVideo] = useState(videoInitialState);
 
   const [playbackRate, setPlaybackRate] = useState(1);
   const [startPosition, setStartPosition] = useState(0);
   const [endPosition, setEndPosition] = useState(1);
-
-  const resetBoundaries = () => {
-    setStartPosition(0);
-    setEndPosition(1);
-  };
 
   const setCurrentTime = (time) => (videoRef.current.currentTime = time);
 
@@ -71,6 +68,13 @@ export const useVideoActions = () => {
     setEndPosition(nextPosition);
   };
 
+  const resetVideoControls = () => {
+    setVideo(videoInitialState);
+    setPlaybackRate(1);
+    setStartPosition(0);
+    setEndPosition(1);
+  };
+
   return {
     videoRef,
     playbackRate,
@@ -83,6 +87,6 @@ export const useVideoActions = () => {
     position: video.position,
     startPosition,
     endPosition,
-    resetBoundaries,
+    resetVideoControls,
   };
 };

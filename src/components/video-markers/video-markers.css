@@ -1,7 +1,6 @@
 .video-markers {
   position: relative;
   margin: 0 24px;
-  padding: 0 4px;
   border: solid 1px #000;
   height: 40px;
 }
@@ -18,7 +17,7 @@
 .video-markers__start:before,
 .video-markers__end:before {
   position: absolute;
-  content: '';
+  content: "";
   width: 24px;
   height: 40px;
   background-color: red;

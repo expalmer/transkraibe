@@ -3,12 +3,15 @@ import Draggable from "react-draggable";
 
 import "./video-markers.css";
 
-import { getPosition } from "../../utils";
+export const getPosition = (track, pointer) => {
+  const left1 = track.getBoundingClientRect().left;
+  const left2 = pointer.getBoundingClientRect().left;
+  return left2 - left1;
+};
 
 export const VideoMarkers = ({
-  videoBuffer,
-  position,
-  changePosition = () => {},
+  startPosition,
+  endPosition,
   changeStartPosition = () => {},
   changeEndPosition = () => {},
 }) => {
@@ -34,18 +37,10 @@ export const VideoMarkers = ({
 
   return (
     <div className="video-markers" ref={trackRef}>
-      <Draggable
-        axis="x"
-        {...dragStartHandlers}
-        bounds={{ left: 0, right: 640 }}
-      >
+      <Draggable axis="x" {...dragStartHandlers} bounds={"parent"}>
         <div className="video-markers__start" ref={startRef}></div>
       </Draggable>
-      <Draggable
-        axis="x"
-        {...dragEndHandlers}
-        bounds={{ left: -640, right: 0 }}
-      >
+      <Draggable axis="x" {...dragEndHandlers} bounds={"parent"}>
         <div className="video-markers__end" ref={endRef}></div>
       </Draggable>
     </div>

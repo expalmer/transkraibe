@@ -3,7 +3,9 @@ import "./player.css";
 export const Player = ({
   videoRef = null,
   source = null,
-  videoOnTimeUpdate = () => {},
+  onVideoTimeUpdate = () => {},
+  onVideoLoadStart = () => {},
+  onLoaded = () => {},
   controls = true,
 }) => {
   return (
@@ -12,7 +14,9 @@ export const Player = ({
         <video
           key={`source=${source}`}
           ref={videoRef}
-          onTimeUpdate={videoOnTimeUpdate}
+          onTimeUpdate={onVideoTimeUpdate}
+          onLoadStart={onVideoLoadStart}
+          onLoadedData={onLoaded}
           controls={controls}
           autoPlay
         >

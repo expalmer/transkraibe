@@ -12,7 +12,6 @@ export const VideoWave = ({
       <Waveform
         buffer={videoBuffer}
         height={80}
-        width={640}
         markerStyle={{ color: "#ffffff", width: 1 }}
         onPositionChange={changePosition}
         plot="bar"
